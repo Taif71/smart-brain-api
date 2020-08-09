@@ -1,0 +1,37 @@
+
+version: '3.6'
+
+services: 
+  # BACKEND API
+  smart-brain-api:
+    container_name: backend
+    # image: node: 14.6.0               # we do not need this since we will build from Dockerfile that image
+    build: ./
+    command: npm start
+    working_dir: /usr/src/smart-brain-api
+    environment:
+      # POSTGRES_USER: sally
+      # POSTGRES_PASSWORD: secret
+      # POSTGRES_DB: smart-brain-docker
+      # POSTGRES_HOST: postgres
+      POSTGRES_URI: postgres://sally:secret@postgres:5432/smart-brain-docker
+    links: 
+      - postgres
+    ports: 
+      - "8000:8000"
+    volumes: 
+      - ./:/usr/src/smart-brain-api
+  
+  # POSTGRES Config
+  postgres:
+    environment:
+      POSTGRES_USER: sally
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: smart-brain-docker
+      POSTGRES_HOST: postgres
+    # container_name: postgres
+    # image: postgres  # w'ere using an image that is pre-built for us in docker hub
+    build: ./postgres # we changed it to build from image. Remember, any time we wanna use a dockerfile, we wanna use build/
+    ports:
+      - "5432:5432"  
+     
