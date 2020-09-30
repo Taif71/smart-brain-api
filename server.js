@@ -9,15 +9,30 @@ const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 
+const port = process.env.PORT || 5000;
+
+
+const isDev = (process.env.NODE_ENV === 'dev');
 const db = knex({
   client: 'pg',
   connection: {
-    host : '127.0.0.1',
-    user : 'aneagoie',
-    password : '',
-    database : 'smart-brain'
+    host : !isDev ? process.env.PG_HOST : '127.0.0.1',
+    user : !isDev ? process.env.PG_USER : '',
+    password : !isDev ? process.env.PG_PASSWORD: '',
+    database : !isDev ? process.env.PG_DATABASE : 'smart-brain',
+    ssl: !isDev ? true : false
   }
 });
+
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+
+// const db = knex({
+//   client: 'pg',
+//   connection: {
+//     connectionString: process.env.DATABASE_URL,
+//     ssl: true,
+//   }
+// });
 
 const app = express();
 
@@ -31,6 +46,11 @@ app.get('/profile/:id', (req, res) => { profile.handleProfileGet(req, res, db)})
 app.put('/image', (req, res) => { image.handleImage(req, res, db)})
 app.post('/imageurl', (req, res) => { image.handleApiCall(req, res)})
 
-app.listen(3000, ()=> {
-  console.log('app is running on port 3000');
+// app.listen(process.env.PORT || 8000, () => {
+//   console.log(`app is running on port ${process.env.PORT}`);
+// });
+
+app.listen(port, () => {
+  console.log(`app is running on port ${port}`)
+  console.log(`app is running on ${process.env.NODE_ENV} mode`)
 })
