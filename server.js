@@ -3,11 +3,13 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
 const knex = require('knex');
+require('dotenv').config();
 
 const register = require('./controllers/register');
 const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
+
 
 const port = process.env.PORT || 5000;
 
@@ -35,7 +37,6 @@ const db = knex({
 // });
 
 const app = express();
-
 app.use(cors())
 app.use(bodyParser.json());
 
